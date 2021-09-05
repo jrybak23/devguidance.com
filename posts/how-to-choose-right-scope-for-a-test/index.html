@@ -1,0 +1,210 @@
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>How to choose right scope for a test | DevGuidance.com</title>
+<meta name=keywords content>
+<meta name=description content="Test scope introduction Rather talk about specific definition of test scope let&rsquo;s review list of different test types ordered from higher to lower scope.
+Basically, the more things like methods, endpoints, databases, services, apps are involved in test the higher is scope.
+How to choose right scope for test There is no clear recommendation how to choose scope for test. Instead of reeling on approximate count concept like test pyramid which inherently makes sense, but besides there are definitely more things that should be considered while choosing test type.">
+<meta name=author content>
+<link rel=canonical href=https://www.devguidance.com/posts/how-to-choose-right-scope-for-a-test/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.a60ec2a4411409077d877e6a436406cb3f1ea20f9d04345f12acfd3a1f89278d.css integrity="sha256-pg7CpEEUCQd9h35qQ2QGyz8eog+dBDRfEqz9Oh+JJ40=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://www.devguidance.com/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://www.devguidance.com/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://www.devguidance.com/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://www.devguidance.com/apple-touch-icon.png>
+<link rel=mask-icon href=https://www.devguidance.com/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.87.0">
+<meta property="og:title" content="How to choose right scope for a test">
+<meta property="og:description" content="Test scope introduction Rather talk about specific definition of test scope let&rsquo;s review list of different test types ordered from higher to lower scope.
+Basically, the more things like methods, endpoints, databases, services, apps are involved in test the higher is scope.
+How to choose right scope for test There is no clear recommendation how to choose scope for test. Instead of reeling on approximate count concept like test pyramid which inherently makes sense, but besides there are definitely more things that should be considered while choosing test type.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.devguidance.com/posts/how-to-choose-right-scope-for-a-test/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-09-05T20:28:17+03:00">
+<meta property="article:modified_time" content="2021-09-05T20:28:17+03:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="How to choose right scope for a test">
+<meta name=twitter:description content="Test scope introduction Rather talk about specific definition of test scope let&rsquo;s review list of different test types ordered from higher to lower scope.
+Basically, the more things like methods, endpoints, databases, services, apps are involved in test the higher is scope.
+How to choose right scope for test There is no clear recommendation how to choose scope for test. Instead of reeling on approximate count concept like test pyramid which inherently makes sense, but besides there are definitely more things that should be considered while choosing test type.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://www.devguidance.com/posts/"},{"@type":"ListItem","position":2,"name":"How to choose right scope for a test","item":"https://www.devguidance.com/posts/how-to-choose-right-scope-for-a-test/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"How to choose right scope for a test","name":"How to choose right scope for a test","description":"Test scope introduction Rather talk about specific definition of test scope let\u0026rsquo;s review list of different test types ordered from higher to lower scope.\nBasically, the more things like methods, endpoints, databases, services, apps are involved in test the higher is scope.\nHow to choose right scope for test There is no clear recommendation how to choose scope for test. Instead of reeling on approximate count concept like test pyramid which inherently makes sense, but besides there are definitely more things that should be considered while choosing test type.","keywords":[],"articleBody":"Test scope introduction Rather talk about specific definition of test scope let’s review list of different test types ordered from higher to lower scope.\nBasically, the more things like methods, endpoints, databases, services, apps are involved in test the higher is scope.\nHow to choose right scope for test There is no clear recommendation how to choose scope for test. Instead of reeling on approximate count concept like test pyramid which inherently makes sense, but besides there are definitely more things that should be considered while choosing test type. I would rather recommend try to trade off between reasons described below. Some of them are really obvious, but they are mentioned just to provide more or less full picture what should be taken into account for choosing scope.\nReasons to choose higher scope Basically, higher scope test gives more confidence that app works as expected. Here are more detail described reasons to choose higher scope tests:\n1. Test required behaviour rather than implementation details It desired that test should be resilient to refactor. There is a bunch of ways how to implement certain logic. By adding test to protect the logic, we expect that it fails only when required behavior is broken. E.g. GET endpoint that returns some user data loaded from database.\nThere are a bunch of:\n Frameworks for HTTP request handling. Ways how to implement/split services, repositories and other classes. Technologies that can be used for persistence. E.g. ORM frameworks, databases.  It’s expected that all this thing described above can be changed over time. By choosing lower scope it may increase coupling between test and implementation. So it becomes harder to evolve system over time.\n2. Tests that intended to cover business logic only doesn’t cover compatibility business logic with lower layer E.g. by mocking SQL queries, ORM calls, or other parts of persistence layer, it doesn’t protect the correctness of calling the persistence layer.\n3. No reason to be concerned about performance of tests beforehand in case when backing services are involved to test In most cases, by running some backing services in Docker (e.g. using testcontainers) doesn’t take reasonable amount of time to set up environment for tests or doesn’t significantly slow down the test. So taking into account the reason #2 you likely benefit from it.\nReasons to choose lower scope 1. Issues with state in high scope tests like API o UI tests It may be complicated to set up initial consistent state for them before each test/suite. Such set up may slow down testing. At same time, some services may be down or overloaded. So that’s why count of such tests expected to be significantly lower than integration+unit tests count.\n2. Generic API Some parts of the app expected to reuse in many other parts of the app. They are intended to help to implement business logic rather to implement business logic itself.\nLet’s take a look on example of the class that provides generic API.\nimport java.time.LocalDate; import java.util.function.Predicate; public class Interval { private final LocalDate begin; private final LocalDate end; public static Interval between(LocalDate begin, LocalDate end) { return new Interval(begin, end); } /** * @param predicate function that accepts date and returns true - if the date should be counted * @return count of days in the interval filtered by predicate function. */ public long countDays(PredicateLocalDate predicate) { long result = 0; for (LocalDate date = begin; !date.isAfter(end); date = date.plusDays(1)) { if (predicate.test(date)) { result++; } } return result; } private Interval(LocalDate begin, LocalDate end) { this.begin = begin; this.end = end; } } It can be reused differently to implement logic in many places. Like this.\nlong workdays=Interval.between(startDate,endDate) .countDays(this::isNotHolidayOrWeekend); But it’s very unlikely that business logic will change that way, so it’ll require changing logic of counting days. So we can confidently cover it by unit test without warring of increasing coupling.\n3. Cases when needed to add mock or stub There is no direct correlation between how high is scope and count of mocks. It should rather happen because of:\n  Achieving consistency by avoiding external calls. HTTP requests to other service or consuming/publishing some data to from/into a real queue should be mocked, stubbed or can be replaced by testcontainers.\n  When increasing scope requires additional excessive test setup. Which leads to common test anti-patterns like: Excessive Setup, Mockery, Giant. For example, additional setup of module or mocks. From my experience, it may happen because of bad design of library/framework/platform.\n  Avoid logic that takes reasonable amount of time to execute. That rather related to UI testing e.g. running animations. It’s not case when you save milliseconds per test if mock repository call instead of calling DB that runs in testcontainers.\n  As the way of assertion by intercepting the call of method. When the result from method call can’t be asserted but needed to make sure that method was called.\n  Logic that depends on current time.\n  Conclusion The article likely doesn’t cover all things about test scope. But main point is instead of sticking to one of concepts try to be flexible and take into account much more things while choosing approach for testing.\nUseful materials related to the topic discussed here  Kent C. Dodds Testing Trophy Kent C. Dodds testing posts Kent C. Dodds – Write tests. Not too many. Mostly integration  Please don’t mock me - Justin Searls  Ian Cooper - TDD, Where Did It All Go Wrong   ","wordCount":"901","inLanguage":"en","datePublished":"2021-09-05T20:28:17+03:00","dateModified":"2021-09-05T20:28:17+03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.devguidance.com/posts/how-to-choose-right-scope-for-a-test/"},"publisher":{"@type":"Organization","name":"DevGuidance.com","logo":{"@type":"ImageObject","url":"https://www.devguidance.com/favicon.ico"}}}</script>
+</head>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<noscript>
+<style type=text/css>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:#1d1e20;--entry:#2e2e33;--primary:rgba(255, 255, 255, 0.84);--secondary:rgba(255, 255, 255, 0.56);--tertiary:rgba(255, 255, 255, 0.16);--content:rgba(255, 255, 255, 0.74);--hljs-bg:#2e2e33;--code-bg:#37383e;--border:#333}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=https://www.devguidance.com/ accesskey=h title="DevGuidance.com (Alt + H)">DevGuidance.com</a>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+</ul>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<h1 class=post-title>
+How to choose right scope for a test
+</h1>
+<div class=post-meta>September 5, 2021
+</div>
+</header>
+<div class=post-content><h2 id=test-scope-introduction>Test scope introduction<a hidden class=anchor aria-hidden=true href=#test-scope-introduction>#</a></h2>
+<p>Rather talk about specific definition of test scope let&rsquo;s review list of different test types ordered from higher to
+lower scope.</p>
+<p><img loading=lazy src=/test-scope.png alt=testscope>
+</p>
+<p>Basically, the more things like methods, endpoints, databases, services, apps are involved in test the higher is scope.</p>
+<h2 id=how-to-choose-right-scope-for-test>How to choose right scope for test<a hidden class=anchor aria-hidden=true href=#how-to-choose-right-scope-for-test>#</a></h2>
+<p>There is no clear recommendation how to choose scope for test. Instead of reeling on approximate count concept
+like <a href=https://martinfowler.com/articles/practical-test-pyramid.html>test pyramid</a> which inherently makes sense, but
+besides there are definitely more things that should be considered while choosing test type. I would rather recommend
+<strong>try to trade off between reasons described below</strong>. Some of them are really obvious, but they are mentioned just to
+provide more or less full picture what should be taken into account for choosing scope.</p>
+<h3 id=reasons-to-choose-higher-scope>Reasons to choose higher scope<a hidden class=anchor aria-hidden=true href=#reasons-to-choose-higher-scope>#</a></h3>
+<p>Basically, higher scope test gives more confidence that app works as expected. Here are more detail described reasons to
+choose higher scope tests:</p>
+<h4 id=1-test-required-behaviour-rather-than-implementation-details>1. Test required behaviour rather than implementation details<a hidden class=anchor aria-hidden=true href=#1-test-required-behaviour-rather-than-implementation-details>#</a></h4>
+<p>It desired that test should be resilient to refactor. There is a bunch of ways how to implement certain logic. By adding
+test to protect the logic, we expect that it fails only when required behavior is broken. E.g. GET endpoint that returns
+some user data loaded from database.</p>
+<p>There are a bunch of:</p>
+<ul>
+<li>Frameworks for HTTP request handling.</li>
+<li>Ways how to implement/split services, repositories and other classes.</li>
+<li>Technologies that can be used for persistence. E.g. ORM frameworks, databases.</li>
+</ul>
+<p>It&rsquo;s expected that all this thing described above can be changed over time. By choosing lower scope <strong>it may increase
+coupling between test and implementation</strong>. So it becomes harder to evolve system over time.</p>
+<h4 id=2-tests-that-intended-to-cover-business-logic-only-doesnt-cover-compatibility-business-logic-with-lower-layer>2. Tests that intended to cover business logic only doesn&rsquo;t cover compatibility business logic with lower layer<a hidden class=anchor aria-hidden=true href=#2-tests-that-intended-to-cover-business-logic-only-doesnt-cover-compatibility-business-logic-with-lower-layer>#</a></h4>
+<p>E.g. by mocking SQL queries, ORM calls, or other parts of persistence layer, it doesn&rsquo;t protect the correctness of
+calling the persistence layer.</p>
+<h4 id=3-no-reason-to-be-concerned-about-performance-of-tests-beforehand-in-case-when-backing-services-are-involved-to-test>3. No reason to be concerned about performance of tests beforehand in case when backing services are involved to test<a hidden class=anchor aria-hidden=true href=#3-no-reason-to-be-concerned-about-performance-of-tests-beforehand-in-case-when-backing-services-are-involved-to-test>#</a></h4>
+<p>In most cases, by running some <a href=https://12factor.net/backing-services>backing services</a> in Docker (e.g.
+using <a href=https://github.com/testcontainers>testcontainers</a>) doesn&rsquo;t take reasonable amount of time to set up environment
+for tests or doesn&rsquo;t significantly slow down the test. So taking into account
+the <a href=#2-tests-that-intended-to-cover-business-logic-only-doesnt-cover-compatibility-business-logic-with-lower-layer>reason #2</a>
+you likely benefit from it.</p>
+<h3 id=reasons-to-choose-lower-scope>Reasons to choose lower scope<a hidden class=anchor aria-hidden=true href=#reasons-to-choose-lower-scope>#</a></h3>
+<h4 id=1-issues-with-state-in-high-scope-tests-like-api-o-ui-tests>1. Issues with state in high scope tests like API o UI tests<a hidden class=anchor aria-hidden=true href=#1-issues-with-state-in-high-scope-tests-like-api-o-ui-tests>#</a></h4>
+<p>It may be complicated to set up initial consistent state for them before each test/suite. Such set up may slow down
+testing. At same time, some services may be down or overloaded. So that&rsquo;s why count of such tests expected to be
+significantly lower than integration+unit tests count.</p>
+<h4 id=2-generic-api>2. Generic API<a hidden class=anchor aria-hidden=true href=#2-generic-api>#</a></h4>
+<p>Some parts of the app expected to reuse in many other parts of the app. They are intended to help to implement business
+logic rather to implement business logic itself.</p>
+<p>Let&rsquo;s take a look on example of the class that provides generic API.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#f92672>import</span> java.time.LocalDate<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.util.function.Predicate<span style=color:#f92672>;</span>
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Interval</span> <span style=color:#f92672>{</span>
+
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> LocalDate begin<span style=color:#f92672>;</span>
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> LocalDate end<span style=color:#f92672>;</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> Interval <span style=color:#a6e22e>between</span><span style=color:#f92672>(</span>LocalDate begin<span style=color:#f92672>,</span> LocalDate end<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> Interval<span style=color:#f92672>(</span>begin<span style=color:#f92672>,</span> end<span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#75715e>/**
+</span><span style=color:#75715e>     * @param predicate function that accepts date and returns true - if the date should be counted
+</span><span style=color:#75715e>     * @return count of days in the interval filtered by predicate function.
+</span><span style=color:#75715e>     */</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>long</span> <span style=color:#a6e22e>countDays</span><span style=color:#f92672>(</span>Predicate<span style=color:#f92672>&lt;</span>LocalDate<span style=color:#f92672>&gt;</span> predicate<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>long</span> result <span style=color:#f92672>=</span> 0<span style=color:#f92672>;</span>
+        <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>LocalDate date <span style=color:#f92672>=</span> begin<span style=color:#f92672>;</span> <span style=color:#f92672>!</span>date<span style=color:#f92672>.</span><span style=color:#a6e22e>isAfter</span><span style=color:#f92672>(</span>end<span style=color:#f92672>);</span> date <span style=color:#f92672>=</span> date<span style=color:#f92672>.</span><span style=color:#a6e22e>plusDays</span><span style=color:#f92672>(</span>1<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>predicate<span style=color:#f92672>.</span><span style=color:#a6e22e>test</span><span style=color:#f92672>(</span>date<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+                result<span style=color:#f92672>++;</span>
+            <span style=color:#f92672>}</span>
+        <span style=color:#f92672>}</span>
+        <span style=color:#66d9ef>return</span> result<span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>Interval</span><span style=color:#f92672>(</span>LocalDate begin<span style=color:#f92672>,</span> LocalDate end<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>begin</span> <span style=color:#f92672>=</span> begin<span style=color:#f92672>;</span>
+        <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>end</span> <span style=color:#f92672>=</span> end<span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>It can be reused differently to implement logic in many places. Like this.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>    <span style=color:#66d9ef>long</span> workdays<span style=color:#f92672>=</span>Interval<span style=color:#f92672>.</span><span style=color:#a6e22e>between</span><span style=color:#f92672>(</span>startDate<span style=color:#f92672>,</span>endDate<span style=color:#f92672>)</span>
+        <span style=color:#f92672>.</span><span style=color:#a6e22e>countDays</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>::</span>isNotHolidayOrWeekend<span style=color:#f92672>);</span>
+</code></pre></div><p>But it&rsquo;s very unlikely that business logic will change that way, so it&rsquo;ll require changing logic of counting days. So we
+can confidently cover it by unit test without warring of increasing coupling.</p>
+<h4 id=3-cases-when-needed-to-add-mock-or-stub>3. Cases when needed to add mock or stub<a hidden class=anchor aria-hidden=true href=#3-cases-when-needed-to-add-mock-or-stub>#</a></h4>
+<p>There is no direct correlation between how high is scope and count of mocks. It should rather happen because of:</p>
+<ol>
+<li>
+<p>Achieving consistency by avoiding external calls. HTTP requests to other service or consuming/publishing some data to
+from/into a real queue should be mocked, stubbed or can be replaced
+by <a href=https://github.com/testcontainers>testcontainers</a>.</p>
+</li>
+<li>
+<p>When increasing scope requires additional excessive test setup. Which leads to
+common <a href=https://www.yegor256.com/2018/12/11/unit-testing-anti-patterns.html>test anti-patterns</a> like:
+Excessive Setup, Mockery, Giant. For example, additional setup of module or mocks. From my experience, it may happen
+because of bad design of library/framework/platform.</p>
+</li>
+<li>
+<p>Avoid logic that takes reasonable amount of time to execute. That rather related to UI testing e.g. running
+animations. It&rsquo;s not case when you save milliseconds per test if mock repository call instead of calling DB that runs
+in <a href=https://github.com/testcontainers>testcontainers</a>.</p>
+</li>
+<li>
+<p>As the way of assertion by intercepting the call of method. When the result from method call can&rsquo;t be asserted but
+needed to make sure that method was called.</p>
+</li>
+<li>
+<p>Logic that depends on current time.</p>
+</li>
+</ol>
+<h2 id=conclusion>Conclusion<a hidden class=anchor aria-hidden=true href=#conclusion>#</a></h2>
+<p>The article likely doesn&rsquo;t cover all things about test scope. But main point is instead of sticking to one of
+concepts <strong>try to be flexible and take into account much more things while choosing approach for testing</strong>.</p>
+<h2 id=useful-materials-related-to-the-topic-discussed-here>Useful materials related to the topic discussed here<a hidden class=anchor aria-hidden=true href=#useful-materials-related-to-the-topic-discussed-here>#</a></h2>
+<ul>
+<li><a href=https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications>Kent C. Dodds Testing Trophy</a></li>
+<li><a href=https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications>Kent C. Dodds testing posts</a></li>
+<li><a href="https://www.youtube.com/watch?v=Fha2bVoC8SE">Kent C. Dodds – Write tests. Not too many. Mostly integration <img loading=lazy src=http://i3.ytimg.com/vi/Fha2bVoC8SE/hqdefault.jpg alt="Kent C. Dodds – Write tests. Not too many. Mostly integration">
+</a></li>
+<li><a href="https://www.youtube.com/watch?v=x8sKpJwq6lY">Please don&rsquo;t mock me - Justin Searls <img loading=lazy src=http://i3.ytimg.com/vi/x8sKpJwq6lY/hqdefault.jpg alt="Please don&amp;rsquo;t mock me - Justin Searls">
+</a></li>
+<li><a href="https://www.youtube.com/watch?v=EZ05e7EMOLM">Ian Cooper - TDD, Where Did It All Go Wrong <img loading=lazy src=http://i3.ytimg.com/vi/EZ05e7EMOLM/hqdefault.jpg alt="Ian Cooper - TDD, Where Did It All Go Wrong">
+</a></li>
+</ul>
+</div>
+<footer class=post-footer>
+</footer>
+</article>
+</main>
+<footer class=footer>
+<span>&copy; 2021 <a href=https://www.devguidance.com/>DevGuidance.com</a></span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)">
+<button class=top-link id=top-link type=button accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</button>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+</body>
+</html>
