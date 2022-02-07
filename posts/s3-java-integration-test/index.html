@@ -1,0 +1,252 @@
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>AWS S3 Java integration testing | DevGuidance.com</title>
+<meta name=keywords content>
+<meta name=description content="Introduction Similarly to the previous article about integration testing , this one describes how to set up it for AWS S3 using LocalStack and Testcontainers. Here is the link to the repository with simple CRUD app and the complete example of S3 testing .
+Dependencies Besides, standard Quarkus dependencies here are libraries that are used specifically for S3 testing setup.
+<dependencies> <dependency> <groupId>io.quarkiverse.amazonservices</groupId> <artifactId>quarkus-amazon-s3</artifactId> </dependency> <dependency> <groupId>software.amazon.awssdk</groupId> <artifactId>url-connection-client</artifactId> </dependency> <!-- Required by testcontainers.">
+<meta name=author content>
+<link rel=canonical href=https://www.devguidance.com/posts/s3-java-integration-test/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.3530eed9954a8b6d1eb388637d01ce81fa710f090fae01cd0c2deb92d308788a.css integrity="sha256-NTDu2ZVKi20es4hjfQHOgfpxDwkPrgHNDC3rktMIeIo=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://www.devguidance.com/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://www.devguidance.com/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://www.devguidance.com/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://www.devguidance.com/apple-touch-icon.png>
+<link rel=mask-icon href=https://www.devguidance.com/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.87.0">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript><meta property="og:title" content="AWS S3 Java integration testing">
+<meta property="og:description" content="Introduction Similarly to the previous article about integration testing , this one describes how to set up it for AWS S3 using LocalStack and Testcontainers. Here is the link to the repository with simple CRUD app and the complete example of S3 testing .
+Dependencies Besides, standard Quarkus dependencies here are libraries that are used specifically for S3 testing setup.
+<dependencies> <dependency> <groupId>io.quarkiverse.amazonservices</groupId> <artifactId>quarkus-amazon-s3</artifactId> </dependency> <dependency> <groupId>software.amazon.awssdk</groupId> <artifactId>url-connection-client</artifactId> </dependency> <!-- Required by testcontainers.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.devguidance.com/posts/s3-java-integration-test/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-02-07T21:32:27+02:00">
+<meta property="article:modified_time" content="2022-02-07T21:32:27+02:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="AWS S3 Java integration testing">
+<meta name=twitter:description content="Introduction Similarly to the previous article about integration testing , this one describes how to set up it for AWS S3 using LocalStack and Testcontainers. Here is the link to the repository with simple CRUD app and the complete example of S3 testing .
+Dependencies Besides, standard Quarkus dependencies here are libraries that are used specifically for S3 testing setup.
+<dependencies> <dependency> <groupId>io.quarkiverse.amazonservices</groupId> <artifactId>quarkus-amazon-s3</artifactId> </dependency> <dependency> <groupId>software.amazon.awssdk</groupId> <artifactId>url-connection-client</artifactId> </dependency> <!-- Required by testcontainers.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://www.devguidance.com/posts/"},{"@type":"ListItem","position":2,"name":"AWS S3 Java integration testing","item":"https://www.devguidance.com/posts/s3-java-integration-test/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"AWS S3 Java integration testing","name":"AWS S3 Java integration testing","description":"Introduction Similarly to the previous article about integration testing , this one describes how to set up it for AWS S3 using LocalStack and Testcontainers. Here is the link to the repository with simple CRUD app and the complete example of S3 testing .\nDependencies Besides, standard Quarkus dependencies here are libraries that are used specifically for S3 testing setup.\n\u0026lt;dependencies\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;io.quarkiverse.amazonservices\u0026lt;/groupId\u0026gt; \u0026lt;artifactId\u0026gt;quarkus-amazon-s3\u0026lt;/artifactId\u0026gt; \u0026lt;/dependency\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;software.amazon.awssdk\u0026lt;/groupId\u0026gt; \u0026lt;artifactId\u0026gt;url-connection-client\u0026lt;/artifactId\u0026gt; \u0026lt;/dependency\u0026gt; \u0026lt;!-- Required by testcontainers.","keywords":[],"articleBody":"Introduction Similarly to the previous article about integration testing , this one describes how to set up it for AWS S3 using LocalStack and Testcontainers. Here is the link to the repository with simple CRUD app and the complete example of S3 testing .\nDependencies Besides, standard Quarkus dependencies here are libraries that are used specifically for S3 testing setup.\n  io.quarkiverse.amazonservices quarkus-amazon-s3   software.amazon.awssdk url-connection-client    com.amazonaws aws-java-sdk-core 1.12.152   org.testcontainers localstack test   S3 connection setup The Quarkus framework has already integration with S3. So it automatically set up the S3 client software.amazon.awssdk.services.s3.S3Client ( from SDK version 2) based on the properties.\n# default credentials - assuming that service is going to be deployed on EC2 for prod env quarkus.s3.aws.credentials.type=default quarkus.s3.aws.region=eu-central-1 # static credentials - to override them in the QuarkusTestResourceLifecycleManager %test.quarkus.s3.aws.credentials.type=static S3 Test provisioning Here is the class that is used by Quarkus to start LocalStack in Docker using Testcontainers via Java API.\npublic class S3Resource implements QuarkusTestResourceLifecycleManager { static LocalStackContainer container = configureContainer(); private static LocalStackContainer configureContainer() { DockerImageName localstackImage = DockerImageName.parse(\"localstack/localstack:0.11.3\"); return new LocalStackContainer(localstackImage) .withServices(S3); } @Override public MapString, String start() { container.start(); String localStackUrl = container.getEndpointOverride(S3).toString(); return Map.of( \"quarkus.s3.endpoint-override\", localStackUrl, \"quarkus.s3.aws.credentials.static-provider.access-key-id\", container.getAccessKey(), \"quarkus.s3.aws.credentials.static-provider.secret-access-key\", container.getSecretKey()); } @Override public void stop() { container.stop(); } } Once it started it overrides AWS S3 endpoint URL and static credentials.\nTest and Implementation Here is the basic test that asserts that the endpoint returns the correct list of object keys.\n@QuarkusTestResource(value = S3Resource.class) @QuarkusTest class FileControllerTest { @Inject S3Repository s3Repository; @BeforeEach public void beforeEach() { s3Repository.createBucketIfNotExists(); } @AfterEach void afterEach() { s3Repository.deleteAllObjects(); } /** * test for {@link FileController#listFiles()} */ @Test void testListFiles() { s3Repository.uploadObject(\"1.jpg\", getClasspathFile(\"test/files/photo1.jpg\")); s3Repository.uploadObject(\"2.jpg\", getClasspathFile(\"test/files/photo2.jpg\")); given() .when().get(\"/files\") .then() .statusCode(OK.getStatusCode()) .contentType(JSON) .log().ifValidationFails() .body(matchesJSON(\"[\\n\\\"1.jpg\\\",\\n\\\"2.jpg\\\"\\n]\")); } } The request is sent by using RestAssured and asserted by the custom matcher . Read the previous article for more details. The controller returns a list that is automatically serialized by JSON-B library.\n@Path(\"/files\") public class FileController { @Inject S3Repository s3Repository; @GET @Produces(APPLICATION_JSON) public Response listFiles() { ListString files = s3Repository.listObjects(); return Response.ok(files) .build(); } } The repository that gets the list of object keys in the bucket.\n@ApplicationScoped public class S3RepositoryImpl implements S3Repository { public static final String BUCKET_NAME = \"s3-integration-testing\"; @Inject S3Client s3Client; @Override public ListString listObjects() { ListObjectsRequest request = ListObjectsRequest.builder() .bucket(BUCKET_NAME) .build(); ListObjectsResponse response = s3Client.listObjects(request); return response.contents().stream() .map(S3Object::key) .collect(toList()); } } On practice the test can be added also on repository layer but here are reasons why specifically in this example, it’s setup to call HTTP endpoints:\n Tests are clear and maintainable even with covering large scope. It verifies that data from S3 can be read/written through HTTP endpoints.  Results  Makes it possible to work with S3 in TDD. The configuration is clean and can be easily reused for new tests. Reliable testing of s3 integration. If test fails than it very likely that business logic was changed or invalid request was send to S3. Quick feedback as performance is good.  It takes 42 seconds to run mvn clean test.\nIt takes about 5 seconds to run 8 integration tests. IntelliJ measures only test execution time (it doesn’t include compilation, App and Testcontainers startup).\n","wordCount":"537","inLanguage":"en","datePublished":"2022-02-07T21:32:27+02:00","dateModified":"2022-02-07T21:32:27+02:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.devguidance.com/posts/s3-java-integration-test/"},"publisher":{"@type":"Organization","name":"DevGuidance.com","logo":{"@type":"ImageObject","url":"https://www.devguidance.com/favicon.ico"}}}</script>
+</head>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=https://www.devguidance.com/ accesskey=h title="DevGuidance.com (Alt + H)">DevGuidance.com</a>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+</ul>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<h1 class=post-title>
+AWS S3 Java integration testing
+</h1>
+<div class=post-meta><span title="2022-02-07 21:32:27 +0200 +0200">February 7, 2022</span>
+</div>
+</header>
+<div class=post-content><h2 id=introduction>Introduction<a hidden class=anchor aria-hidden=true href=#introduction>#</a></h2>
+<p>Similarly
+to <a href=https://www.devguidance.com/posts/integration-testing-setup-for-java-rest-api-applications-with-database-persistence/>the previous article about integration testing</a>
+, this one describes how to set up it for AWS S3 using
+<a href=https://github.com/localstack/localstack>LocalStack</a> and <a href=https://github.com/testcontainers>Testcontainers</a>. Here is
+the <a href=https://github.com/jrybak23/s3-integration-testing>link to the repository with simple CRUD app and the complete example of S3 testing</a>
+.</p>
+<h2 id=dependencies>Dependencies<a hidden class=anchor aria-hidden=true href=#dependencies>#</a></h2>
+<p>Besides, standard Quarkus dependencies here are libraries that are used specifically for S3 testing setup.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml>
+<span style=color:#f92672>&lt;dependencies&gt;</span>
+    <span style=color:#f92672>&lt;dependency&gt;</span>
+        <span style=color:#f92672>&lt;groupId&gt;</span>io.quarkiverse.amazonservices<span style=color:#f92672>&lt;/groupId&gt;</span>
+        <span style=color:#f92672>&lt;artifactId&gt;</span>quarkus-amazon-s3<span style=color:#f92672>&lt;/artifactId&gt;</span>
+    <span style=color:#f92672>&lt;/dependency&gt;</span>
+    <span style=color:#f92672>&lt;dependency&gt;</span>
+        <span style=color:#f92672>&lt;groupId&gt;</span>software.amazon.awssdk<span style=color:#f92672>&lt;/groupId&gt;</span>
+        <span style=color:#f92672>&lt;artifactId&gt;</span>url-connection-client<span style=color:#f92672>&lt;/artifactId&gt;</span>
+    <span style=color:#f92672>&lt;/dependency&gt;</span>
+    <span style=color:#75715e>&lt;!-- Required by testcontainers.localstack --&gt;</span>
+    <span style=color:#f92672>&lt;dependency&gt;</span>
+        <span style=color:#f92672>&lt;groupId&gt;</span>com.amazonaws<span style=color:#f92672>&lt;/groupId&gt;</span>
+        <span style=color:#f92672>&lt;artifactId&gt;</span>aws-java-sdk-core<span style=color:#f92672>&lt;/artifactId&gt;</span>
+        <span style=color:#f92672>&lt;version&gt;</span>1.12.152<span style=color:#f92672>&lt;/version&gt;</span>
+    <span style=color:#f92672>&lt;/dependency&gt;</span>
+    <span style=color:#f92672>&lt;dependency&gt;</span>
+        <span style=color:#f92672>&lt;groupId&gt;</span>org.testcontainers<span style=color:#f92672>&lt;/groupId&gt;</span>
+        <span style=color:#f92672>&lt;artifactId&gt;</span>localstack<span style=color:#f92672>&lt;/artifactId&gt;</span>
+        <span style=color:#f92672>&lt;scope&gt;</span>test<span style=color:#f92672>&lt;/scope&gt;</span>
+    <span style=color:#f92672>&lt;/dependency&gt;</span>
+<span style=color:#f92672>&lt;/dependencies&gt;</span>
+</code></pre></div><h2 id=s3-connection-setup>S3 connection setup<a hidden class=anchor aria-hidden=true href=#s3-connection-setup>#</a></h2>
+<p>The Quarkus framework has already integration with S3. So it automatically set up the S3
+client <code>software.amazon.awssdk.services.s3.S3Client</code> (
+from <a href=https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/migration-whats-different.html>SDK version 2</a>)
+based on the properties.</p>
+<pre><code class=language-properties data-lang=properties># default credentials - assuming that service is going to be deployed on EC2 for prod env
+quarkus.s3.aws.credentials.type=default
+quarkus.s3.aws.region=eu-central-1
+# static credentials - to override them in the QuarkusTestResourceLifecycleManager
+%test.quarkus.s3.aws.credentials.type=static
+</code></pre><h2 id=s3-test-provisioning>S3 Test provisioning<a hidden class=anchor aria-hidden=true href=#s3-test-provisioning>#</a></h2>
+<p>Here is the class that is used by Quarkus to start LocalStack in Docker using Testcontainers via Java API.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>S3Resource</span> <span style=color:#66d9ef>implements</span> QuarkusTestResourceLifecycleManager <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>static</span> LocalStackContainer container <span style=color:#f92672>=</span> configureContainer<span style=color:#f92672>();</span>
+
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> LocalStackContainer <span style=color:#a6e22e>configureContainer</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        DockerImageName localstackImage <span style=color:#f92672>=</span> DockerImageName<span style=color:#f92672>.</span><span style=color:#a6e22e>parse</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;localstack/localstack:0.11.3&#34;</span><span style=color:#f92672>);</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> LocalStackContainer<span style=color:#f92672>(</span>localstackImage<span style=color:#f92672>)</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>withServices</span><span style=color:#f92672>(</span>S3<span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>start</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        container<span style=color:#f92672>.</span><span style=color:#a6e22e>start</span><span style=color:#f92672>();</span>
+        String localStackUrl <span style=color:#f92672>=</span> container<span style=color:#f92672>.</span><span style=color:#a6e22e>getEndpointOverride</span><span style=color:#f92672>(</span>S3<span style=color:#f92672>).</span><span style=color:#a6e22e>toString</span><span style=color:#f92672>();</span>
+        <span style=color:#66d9ef>return</span> Map<span style=color:#f92672>.</span><span style=color:#a6e22e>of</span><span style=color:#f92672>(</span>
+                <span style=color:#e6db74>&#34;quarkus.s3.endpoint-override&#34;</span><span style=color:#f92672>,</span> localStackUrl<span style=color:#f92672>,</span>
+                <span style=color:#e6db74>&#34;quarkus.s3.aws.credentials.static-provider.access-key-id&#34;</span><span style=color:#f92672>,</span> container<span style=color:#f92672>.</span><span style=color:#a6e22e>getAccessKey</span><span style=color:#f92672>(),</span>
+                <span style=color:#e6db74>&#34;quarkus.s3.aws.credentials.static-provider.secret-access-key&#34;</span><span style=color:#f92672>,</span> container<span style=color:#f92672>.</span><span style=color:#a6e22e>getSecretKey</span><span style=color:#f92672>());</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>stop</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        container<span style=color:#f92672>.</span><span style=color:#a6e22e>stop</span><span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Once it started it overrides AWS S3 endpoint URL and static credentials.</p>
+<h2 id=test-and-implementation>Test and Implementation<a hidden class=anchor aria-hidden=true href=#test-and-implementation>#</a></h2>
+<p>Here is the basic test that asserts that the endpoint returns the correct list of object keys.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>
+<span style=color:#a6e22e>@QuarkusTestResource</span><span style=color:#f92672>(</span>value <span style=color:#f92672>=</span> S3Resource<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>)</span>
+<span style=color:#a6e22e>@QuarkusTest</span>
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FileControllerTest</span> <span style=color:#f92672>{</span>
+
+    <span style=color:#a6e22e>@Inject</span>
+    S3Repository s3Repository<span style=color:#f92672>;</span>
+
+    <span style=color:#a6e22e>@BeforeEach</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>beforeEach</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        s3Repository<span style=color:#f92672>.</span><span style=color:#a6e22e>createBucketIfNotExists</span><span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#a6e22e>@AfterEach</span>
+    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>afterEach</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        s3Repository<span style=color:#f92672>.</span><span style=color:#a6e22e>deleteAllObjects</span><span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#75715e>/**
+</span><span style=color:#75715e>     * test for {@link FileController#listFiles()}
+</span><span style=color:#75715e>     */</span>
+    <span style=color:#a6e22e>@Test</span>
+    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testListFiles</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        s3Repository<span style=color:#f92672>.</span><span style=color:#a6e22e>uploadObject</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;1.jpg&#34;</span><span style=color:#f92672>,</span> getClasspathFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;test/files/photo1.jpg&#34;</span><span style=color:#f92672>));</span>
+        s3Repository<span style=color:#f92672>.</span><span style=color:#a6e22e>uploadObject</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;2.jpg&#34;</span><span style=color:#f92672>,</span> getClasspathFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;test/files/photo2.jpg&#34;</span><span style=color:#f92672>));</span>
+
+        given<span style=color:#f92672>()</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>().</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/files&#34;</span><span style=color:#f92672>)</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>then</span><span style=color:#f92672>()</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>statusCode</span><span style=color:#f92672>(</span>OK<span style=color:#f92672>.</span><span style=color:#a6e22e>getStatusCode</span><span style=color:#f92672>())</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>contentType</span><span style=color:#f92672>(</span>JSON<span style=color:#f92672>)</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>log</span><span style=color:#f92672>().</span><span style=color:#a6e22e>ifValidationFails</span><span style=color:#f92672>()</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>body</span><span style=color:#f92672>(</span>matchesJSON<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;[\n\&#34;1.jpg\&#34;,\n\&#34;2.jpg\&#34;\n]&#34;</span><span style=color:#f92672>));</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>The request is sent by using RestAssured and asserted
+by <a href=https://github.com/jrybak23/s3-integration-testing/blob/master/src/test/java/com/example/controller/testutil/JSONMatchers.java>the custom matcher</a>
+.
+Read <a href=https://www.devguidance.com/posts/integration-testing-setup-for-java-rest-api-applications-with-database-persistence/#json-result-assertion>the previous article</a>
+for more details. The controller returns a list that is automatically serialized by JSON-B library.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>
+<span style=color:#a6e22e>@Path</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/files&#34;</span><span style=color:#f92672>)</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FileController</span> <span style=color:#f92672>{</span>
+
+    <span style=color:#a6e22e>@Inject</span>
+    S3Repository s3Repository<span style=color:#f92672>;</span>
+
+    <span style=color:#a6e22e>@GET</span>
+    <span style=color:#a6e22e>@Produces</span><span style=color:#f92672>(</span>APPLICATION_JSON<span style=color:#f92672>)</span>
+    <span style=color:#66d9ef>public</span> Response <span style=color:#a6e22e>listFiles</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> files <span style=color:#f92672>=</span> s3Repository<span style=color:#f92672>.</span><span style=color:#a6e22e>listObjects</span><span style=color:#f92672>();</span>
+        <span style=color:#66d9ef>return</span> Response<span style=color:#f92672>.</span><span style=color:#a6e22e>ok</span><span style=color:#f92672>(</span>files<span style=color:#f92672>)</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>build</span><span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>The repository that gets the list of object keys in the bucket.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>
+<span style=color:#a6e22e>@ApplicationScoped</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>S3RepositoryImpl</span> <span style=color:#66d9ef>implements</span> S3Repository <span style=color:#f92672>{</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> String BUCKET_NAME <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;s3-integration-testing&#34;</span><span style=color:#f92672>;</span>
+
+    <span style=color:#a6e22e>@Inject</span>
+    S3Client s3Client<span style=color:#f92672>;</span>
+
+    <span style=color:#a6e22e>@Override</span>
+    <span style=color:#66d9ef>public</span> List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>listObjects</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        ListObjectsRequest request <span style=color:#f92672>=</span> ListObjectsRequest<span style=color:#f92672>.</span><span style=color:#a6e22e>builder</span><span style=color:#f92672>()</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>bucket</span><span style=color:#f92672>(</span>BUCKET_NAME<span style=color:#f92672>)</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>build</span><span style=color:#f92672>();</span>
+
+        ListObjectsResponse response <span style=color:#f92672>=</span> s3Client<span style=color:#f92672>.</span><span style=color:#a6e22e>listObjects</span><span style=color:#f92672>(</span>request<span style=color:#f92672>);</span>
+        <span style=color:#66d9ef>return</span> response<span style=color:#f92672>.</span><span style=color:#a6e22e>contents</span><span style=color:#f92672>().</span><span style=color:#a6e22e>stream</span><span style=color:#f92672>()</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>S3Object<span style=color:#f92672>::</span>key<span style=color:#f92672>)</span>
+                <span style=color:#f92672>.</span><span style=color:#a6e22e>collect</span><span style=color:#f92672>(</span>toList<span style=color:#f92672>());</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>On practice the test can be added also on repository layer but here are reasons why specifically in this example, it&rsquo;s
+setup to call HTTP endpoints:</p>
+<ul>
+<li>Tests are clear and maintainable even with
+covering <a href=https://www.devguidance.com/posts/how-to-choose-right-scope-for-a-test/>large scope</a>.</li>
+<li>It verifies that data from S3 can be read/written through HTTP endpoints.</li>
+</ul>
+<h2 id=results>Results<a hidden class=anchor aria-hidden=true href=#results>#</a></h2>
+<ul>
+<li>Makes it possible to work with S3 in TDD.</li>
+<li>The configuration is clean and can be easily reused for new tests.</li>
+<li>Reliable testing of s3 integration. If test fails than it very likely that business logic was changed or invalid
+request was send to S3.</li>
+<li>Quick feedback as performance is good.</li>
+</ul>
+<p><img loading=lazy src=/s3-integration-testing-mvn-test.png alt="s3 integration testing mvn test perfomance">
+<em>It takes 42 seconds to run <code>mvn clean test</code>.</em></p>
+<p><img loading=lazy src=/s3-integration-testing-idea.png alt="s3 integration testing run using intellij perfomance">
+<em>It takes about 5 seconds to run 8 integration tests. IntelliJ measures only test execution time (it doesn&rsquo;t include
+compilation, App and Testcontainers startup).</em></p>
+</div>
+<footer class=post-footer>
+</footer>
+</article>
+</main>
+<footer class=footer>
+<span>&copy; 2022 <a href=https://www.devguidance.com/>DevGuidance.com</a></span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+</body>
+</html>
